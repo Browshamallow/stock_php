@@ -1,9 +1,7 @@
 <?php
 
-// Définition du namespace pour le contrôleur
 namespace App\Http\Controllers;
 
-// Importation des classes nécessaires
 use App\Models\Supply;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -12,7 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class SupplyController extends Controller
 {
-    
     public function __construct()
     {
         $this->middleware('auth:sanctum');
@@ -34,14 +31,12 @@ class SupplyController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validation des données entrantes
             $validated = $request->validate([
                 'product_id' => 'required|integer|exists:products,id',
                 'quantity' => 'required|integer|min:1',
                 'supplier_name' => 'required|string|max:255'
             ]);
 
-            // Transaction pour assurer l'intégrité des données
             return DB::transaction(function () use ($validated) {
                 // Création de l'approvisionnement
                 $supply = Supply::create($validated);
@@ -55,13 +50,11 @@ class SupplyController extends Controller
             });
 
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
             return response()->json([
                 'message' => 'Erreur de validation',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            // Gestion des autres erreurs
             return response()->json([
                 'message' => 'Erreur du serveur',
                 'error' => $e->getMessage()
@@ -89,14 +82,12 @@ class SupplyController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // Validation des données entrantes
             $validated = $request->validate([
                 'product_id' => 'sometimes|integer|exists:products,id',
                 'quantity' => 'sometimes|integer|min:1',
                 'supplier_name' => 'sometimes|string|max:255'
             ]);
 
-            // Transaction pour assurer l'intégrité des données
             return DB::transaction(function () use ($id, $validated) {
                 $supply = Supply::findOrFail($id);
                 $originalQuantity = $supply->quantity;
@@ -105,7 +96,6 @@ class SupplyController extends Controller
                 $supply->update($validated);
 
                 // Si la quantité a changé
-                // Si la quantité a changé, mise à jour du stock
                 if (isset($validated['quantity'])) {
                     $product = Product::findOrFail($supply->product_id);
                     $quantityDifference = $validated['quantity'] - $originalQuantity;
@@ -117,13 +107,11 @@ class SupplyController extends Controller
             });
 
         } catch (ValidationException $e) {
-            // Gestion des erreurs de validation
             return response()->json([
                 'message' => 'Erreur de validation',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            // Gestion des autres erreurs
             return response()->json([
                 'message' => 'Erreur du serveur',
                 'error' => $e->getMessage()
@@ -137,13 +125,11 @@ class SupplyController extends Controller
     public function destroy($id)
     {
         try {
-            // Transaction pour assurer l'intégrité des données
             return DB::transaction(function () use ($id) {
                 $supply = Supply::findOrFail($id);
                 $product = Product::findOrFail($supply->product_id);
                 
                 // Réduction du stock
-                // Réduction du stock avant suppression
                 $product->current_stock -= $supply->quantity;
                 $product->save();
 
@@ -156,7 +142,6 @@ class SupplyController extends Controller
             });
 
         } catch (\Exception $e) {
-            // Gestion des erreurs
             return response()->json([
                 'message' => 'Erreur du serveur',
                 'error' => $e->getMessage()
