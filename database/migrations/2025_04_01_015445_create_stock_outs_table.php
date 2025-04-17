@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock_outs', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // database/migrations/xxxx_xx_xx_create_stock_outs_table.php
+
+Schema::create('stock_outs', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('product_id')
+          ->constrained()
+          ->onDelete('cascade');
+    $table->integer('quantity')->unsigned();
+    $table->string('reason');
+    $table->date('date')->nullable(); // Champ nullable
+    $table->timestamps();
+});
     }
 
     /**
