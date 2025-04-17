@@ -4,12 +4,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Product;
+use Carbon\Carbon;
 use App\Models\Supply;
+use App\Models\Product;
 use App\Models\StockOut;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class StatsController extends Controller
 {

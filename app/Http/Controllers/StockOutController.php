@@ -3,9 +3,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StockOut;
 use App\Models\Product;
+use App\Models\StockOut;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
